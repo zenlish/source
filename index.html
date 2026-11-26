@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ôn tập Tâm lý truyền thông</title>
+<style>
+:root{--bg:#141413;--bg2:#1c1b19;--card:#1f1e1b;--line:#2f2d29;--tx:#f1efe9;--mut:#9a968c;--g:#2fb668;--gd:#0c2e1c;--y:#f2b705;--r:#e5584f;--rd:#33130f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.top{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.top .title{font-weight:700}
+.tabs{display:flex;gap:4px;margin:0 auto;border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{padding:8px 16px;border-radius:999px;color:var(--mut)}
+.tabs button.on{color:var(--g);border:1px solid var(--g);background:rgba(47,182,104,.08)}
+.wrap{max-width:940px;margin:0 auto;padding:16px 16px 140px}
+.navrow{display:flex;gap:10px;align-items:flex-start}
+.strip{flex:1;display:flex;gap:10px;overflow-x:auto;padding:6px 4px 10px;scrollbar-width:thin}
+.strip button{flex:0 0 46px;height:40px;border-radius:10px;background:#2a2a27;color:var(--tx);border:2px solid transparent;font-weight:500}
+.strip button.ok{background:var(--g);color:#06210f}
+.strip button.bad{background:var(--r);color:#fff}
+.strip button.mark{border-color:var(--y);color:var(--y);background:#2a2a27}
+.strip button.ok.mark{color:#06210f}
+.strip button.cur{border-color:#fff;box-shadow:0 0 0 2px var(--bg),0 0 0 4px #fff}
+.counter{padding:8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg2);white-space:nowrap;color:var(--mut);position:relative}
+.counter b{color:var(--tx)}
+.prog{height:3px;background:#000;border-radius:3px;margin:2px 4px 14px;overflow:hidden;display:flex}
+.prog i{display:block;height:100%}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px 28px;min-height:430px;cursor:pointer}
+.card.back{border-color:var(--g);padding:0;cursor:pointer}
+.card.static{cursor:default}
+.ans-head{padding:18px 28px;border-bottom:1px solid var(--line);color:var(--g);font-size:12px;letter-spacing:.08em;font-weight:600}
+.ans-head span{font-size:26px;margin-left:12px;letter-spacing:0}
+.card.back .in{padding:22px 28px}
+.q{font-size:21px;font-weight:700;line-height:1.45;margin:0 0 20px}
+.opt{display:flex;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#161513;margin-bottom:10px;text-align:left;width:100%}
+.opt .l{flex:0 0 32px;height:32px;border-radius:50%;background:#0d0d0c;display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--mut)}
+.opt.correct{border-color:var(--g);background:var(--gd);font-weight:600}
+.opt.correct .l{background:var(--g);color:#06210f}
+.opt.wrong{border-color:var(--r);background:var(--rd)}
+.opt.wrong .l{background:var(--r);color:#fff}
+.opt.dim{color:var(--mut)}
+.opt.sel{border-color:var(--g)}
+.opt.sel .l{background:var(--g);color:#06210f}
+.hint{color:var(--mut);font-size:14px;margin-top:10px;display:flex;gap:8px;align-items:center}
+.flip{border-top:1px solid var(--line);margin-top:8px;padding:14px;text-align:center;color:var(--mut);font-size:14px}
+.row2{display:flex;justify-content:space-between;align-items:center;padding:14px 4px 0}
+.badge{font-size:13px;padding:4px 12px;border-radius:999px;background:rgba(47,182,104,.15);color:var(--g);border:1px solid rgba(47,182,104,.3)}
+.badge.no{background:#2a2a27;color:var(--mut);border-color:var(--line)}
+.row2 .acts{display:flex;gap:26px;color:var(--mut)}
+.row2 .acts button:hover,.row2 .acts button.on{color:var(--y)}
+.bar{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--bg) 30%);padding:26px 16px 12px}
+.bar .in{max-width:940px;margin:0 auto;display:flex;gap:14px;align-items:center}
+.bar .side{color:var(--mut);padding:10px 8px;white-space:nowrap}
+.bar .side:disabled{opacity:.35;cursor:default}
+.big{flex:1;height:52px;border-radius:999px;background:var(--g);color:#06210f;font-weight:600}
+.big.ghost{background:var(--card);color:var(--tx);border:1px solid var(--line)}
+.bar .help{text-align:center;color:var(--mut);font-size:12px;margin-top:6px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;margin-top:10px}
+.panel h2{margin:0 0 6px}
+.muted{color:var(--mut)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:18px 0}
+.stat{background:#161513;border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat b{display:block;font-size:26px}
+.btn{padding:12px 22px;border-radius:999px;background:var(--g);color:#06210f;font-weight:600;margin:6px 8px 0 0}
+.btn.ghost{background:var(--card);color:var(--tx);border:1px solid var(--line)}
+select{background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:999px;padding:8px 12px;font:inherit}
+.timer{font-variant-numeric:tabular-nums;color:var(--y);font-weight:700}
+.rev{margin-top:14px}.rev .q{font-size:17px}
+@media(max-width:640px){.top{padding:10px}.tabs{order:3;width:100%;justify-content:center}.card{padding:18px}.q{font-size:18px}.help{display:none}.bar .side span{display:none}}
+
+/* ===== v2: gọn hơn, nút đẹp hơn, hiệu ứng lật ===== */
+body{font-size:14px}
+button{transition:background .15s,border-color .15s,color .15s,transform .12s,filter .15s,box-shadow .15s}
+button:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.top{padding:9px 16px;gap:10px}
+.top .title{font-size:14px}
+#reset{padding:6px 12px;border-radius:999px;font-size:13px}
+#reset:hover{background:var(--card);color:var(--tx)}
+.tabs button{padding:6px 14px;font-size:13px}
+.tabs button:hover:not(.on){color:var(--tx)}
+select{padding:6px 12px;font-size:13px}
+.wrap{max-width:740px;padding:10px 14px 110px}
+.strip{gap:7px;padding:4px 3px 8px}
+.strip button{flex:0 0 36px;height:32px;border-radius:8px;font-size:13px}
+.strip button:hover{transform:translateY(-2px);filter:brightness(1.15)}
+.counter{padding:5px 11px;border-radius:10px;font-size:13px}
+.prog{margin:0 3px 12px}
+.card{padding:20px 22px;min-height:0;border-radius:18px}
+.q{font-size:17px;margin:0 0 14px}
+.opt{padding:10px 13px;gap:11px;border-radius:11px;margin-bottom:8px;font-size:14px}
+.opt .l{flex:0 0 26px;height:26px;font-size:12px}
+button.opt{cursor:pointer}
+button.opt:hover:not(:disabled){border-color:#55514a;background:#1e1d1a;transform:translateX(2px)}
+button.opt:active:not(:disabled){transform:scale(.99)}
+.ans-head{padding:12px 22px;font-size:11px}
+.ans-head span{font-size:21px;margin-left:10px}
+.card.back .in{padding:16px 22px 8px}
+.flip,.fliphint{padding:10px;font-size:12px;text-align:center;color:var(--mut)}
+.fliphint{margin-top:6px}
+.hint{font-size:13px}
+.row2{padding:10px 2px 0}
+.badge{font-size:12px;padding:3px 10px}
+.row2 .acts button{padding:6px 12px;border-radius:999px;font-size:13px}
+.row2 .acts button:hover{background:var(--card)}
+.bar{padding:18px 14px 8px}
+.bar .in{max-width:740px;gap:10px}
+.big{height:44px;font-size:14px;box-shadow:0 4px 14px rgba(47,182,104,.22)}
+.big:hover:not(:disabled){filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 18px rgba(47,182,104,.32)}
+.big:active:not(:disabled){transform:translateY(1px) scale(.99);box-shadow:none}
+.big.ghost{box-shadow:none}
+.big.ghost:hover:not(:disabled){border-color:var(--g);background:#262521}
+.big:disabled{cursor:not-allowed}
+.big.no{background:var(--card);color:#ff8d85;border:1px solid #4a2723;box-shadow:none}
+.big.no:hover{background:var(--rd);border-color:var(--r)}
+.bar .side{padding:9px 14px;border-radius:999px;font-size:13px}
+.bar .side:hover:not(:disabled){background:var(--card);color:var(--tx)}
+.bar .help{font-size:11px;margin-top:5px}
+kbd{font:11px ui-monospace,monospace;padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--bg2)}
+.panel{padding:20px;border-radius:16px}
+.stat b{font-size:22px}
+.btn{padding:10px 20px;font-size:14px}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.ghost:hover{border-color:var(--g)}
+
+/* lật thẻ 3D */
+.scene{perspective:1600px}
+.scene.enter{animation:enter .28s ease-out}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.flipper{display:grid;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.45,.05,.2,1);cursor:pointer}
+.flipper.is-flipped{transform:rotateY(180deg)}
+.face{visibility:visible;transition:visibility 0s .3s}
+.face.bk{visibility:hidden}
+.flipper.is-flipped .face:not(.bk){visibility:hidden}
+.flipper.is-flipped .face.bk{visibility:visible}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden;min-height:310px;display:flex;flex-direction:column;justify-content:space-between}
+.face.bk{transform:rotateY(180deg)}
+@media(prefers-reduced-motion:reduce){.flipper{transition:none}.scene.enter{animation:none}}
+@media(max-width:640px){.card{padding:16px}.q{font-size:16px}}
+</style>
+</head>
+<body>
+<div class="top">
+  <button id="reset" class="muted" title="Xóa tiến độ">⟲ Đặt lại</button>
+  <span class="title">TLTT · Tâm lý truyền thông</span>
+  <div class="tabs" id="tabs">
+    <button data-m="flash" class="on">Thẻ ghi nhớ</button>
+    <button data-m="study">Học</button>
+    <button data-m="exam">Thi thử</button>
+  </div>
+  <select id="filter">
+    <option value="all">Tất cả</option>
+    <option value="todo">Chưa thuộc</option>
+    <option value="done">Đã thuộc</option>
+    <option value="mark">Đã đánh dấu</option>
+    <option value="multi">Chọn nhiều đáp án</option>
+  </select>
+</div>
+<div class="wrap" id="app"></div>
+<div class="bar" id="bar"></div>
+
+<script>
+const DATA = [{"q": "What are common obstacles to social marketing? Choose 3 correct answers.", "options": [["A", "It tend to have a lower degree of both shared benefits and shared responsibilities than products."], ["B", "The benefits tend to be delayed or intangible."], ["C", "Social marketers often set unrealistically high goals."], ["D", "Social marketing campaigns are often very simple, compared to what is typically involved in commercial marketing."], ["E", "Unhealthy practices tend to be deeply rooted and highly emotion-laden and thus rigidly resistant to change."], ["F", "In spite of attracting enormous funds, social marketing campaigns often fail to effectively allocate these funds to their activities."]], "answer": ["B", "C", "E"], "multi": true}, {"q": "What are myths of romance proposed by Mary-Lou Galician (2004, 2007). Choose 3 correct answers.", "options": [["A", "The love of a true woman can make a man become a better person."], ["B", "Mass media portrayals of romance enormously affect the way you act in love."], ["C", "A woman should look like a model to attract a man and keep his affection."], ["D", "You and your perfect partner are predestined to be together."], ["E", "Jealousy is an indicator of true love."]], "answer": ["C", "D", "E"], "multi": true}, {"q": "When was High-definition television (HDTV) fully implemented in the United States?", "options": [["A", "In early 2006"], ["B", "In early 2007"], ["C", "In early 2009"], ["D", "In early 2008"]], "answer": ["C"], "multi": false}, {"q": "Why do young children often see greater social realism in television content than adults do?", "options": [["A", "Because children do not understand social realism"], ["B", "Because of children's memory is limited"], ["C", "Because of their shorter life experience"], ["D", "Because children's cognition is better than adults"]], "answer": ["C"], "multi": false}, {"q": "Which type of psychological appeal in Advertising is used in this case: \"An ad for a new product may explain in some detail what that product does, what its features are, and how those features differ from those of existing products\"", "options": [["A", "Emotional Appeals"], ["B", "Informational Appeals"], ["C", "Patriotic Appeals"], ["D", "Achievement, Success, and Power Appeals"]], "answer": ["B"], "multi": false}, {"q": "What does the central route in the Elaboration Likelihood Model involve?", "options": [["A", "It involves an initial, often emotional, response to one salient aspect of the message."], ["B", "It involves the use of famous personalities to endorse a product."], ["C", "It involves the use of humor to sell a product."], ["D", "It involves effortful cognitive processing, where the arguments of the persuader are thoughtfully evaluated."]], "answer": ["D"], "multi": false}, {"q": "What is TRUE about the peripheral route to persuasion in ads? Choose 2 correct answers.", "options": [["A", "It is typically used in the informational appeals."], ["B", "It requires effortful cognitive processing."], ["C", "The likelihood of active cognitive elaboration is low."], ["D", "It is predominate in most of the ads we encounter."], ["E", "Information is stored and retrieved from long-term memory."]], "answer": ["C", "D"], "multi": true}, {"q": "When dramas and comedies regularly show smoking and alcohol consumption as common ways of dealing with stress, children and teens will learn that as a coping strategy. Which theory of mass communication does the above example refer to?", "options": [["A", "Social Cognitive Theory"], ["B", "Agenda Setting Theory"], ["C", "Uses and Gratifications Theory"], ["D", "Schema (Script) Theory"]], "answer": ["A"], "multi": false}, {"q": "Which of the following is an example of a \"sound bite\" in the context of news reporting?", "options": [["A", "\"Yes We Can\" - Barack Obama's 2008 campaign slogan"], ["B", "\"Make America Great Again\" - Donald Trump's 2016 campaign slogan"], ["C", "\"Black Lives Matter\" - A slogan from the Black Lives Matter movement"], ["D", "All of the above"]], "answer": ["D"], "multi": false}, {"q": "Fill in a blank: \"A different kind of persuasive media message is the ________, usually sponsored by some government agency or nonprofit organization, or coordinated by the non-profit Ad Council.\"", "options": [["A", "public Service Announcement"], ["B", "community Service Announcement"], ["C", "civil Service Announcement"], ["D", "human Service Announcement"]], "answer": ["A"], "multi": false}, {"q": "________ such as overall aggression levels also no doubt play a role in whether sexual aggression is perceived as sexually arousing (Kingston & Malamuth, 2011).", "options": [["A", "Sexual differences"], ["B", "Traditional differences"], ["C", "Cultural differences"], ["D", "Individual differences"]], "answer": ["D"], "multi": false}, {"q": "What is NOT one of the major subprocesses of media information processing?", "options": [["A", "Encoding"], ["B", "Retrieval"], ["C", "Interpreting"], ["D", "Storage"]], "answer": ["C"], "multi": false}, {"q": "Which factor makes social marketing campaigns more challenging than commercial advertising?", "options": [["A", "Less financial investment"], ["B", "More straightforward messaging"], ["C", "Greater degree of shared responsibility"], ["D", "Lack of emotional appeal"]], "answer": ["C"], "multi": false}, {"q": "What year did television appear?", "options": [["A", "The 1920s"], ["B", "The 1950s"], ["C", "The 1960s"], ["D", "The 1990s"]], "answer": ["B"], "multi": false}, {"q": "Oliver (1993) found that punitive attitudes toward sexuality and traditional attitudes toward women's sexuality were associated with high school students' greater enjoyment of previews of ________.", "options": [["A", "Action films"], ["B", "Romantic films"], ["C", "comedy"], ["D", "Slasher films"]], "answer": ["D"], "multi": false}, {"q": "What is the focus of personality development in mitigating negative effects of media violence? Choose 2 correct answers.", "options": [["A", "Encouraging psychological identification with the perpetrators of violence"], ["B", "Restricting screen time"], ["C", "Discouraging sensation seeking"], ["D", "Cultivating empathic qualities"], ["E", "Modeling socialization in children"]], "answer": ["D", "E"], "multi": true}, {"q": "What are some issues with many studies on the effects of media violence? Choose 2 correct answers.", "options": [["A", "They are limited to institutional media."], ["B", "Most are conducted in a laboratory setting."], ["C", "Most use retrospective methods."], ["D", "Most fail to measure the participants' behavior and attitudes."], ["E", "The long-term cumulative effects are not directly addressed."]], "answer": ["B", "E"], "multi": true}, {"q": "Example: A study of the effects of media violence or content analyses of sexist content in ads are generally done with no commercial motivation. Which type of research is suitable for this study?", "options": [["A", "administrative research"], ["B", "critical research"], ["C", "descriptive research"], ["D", "experimental research"]], "answer": ["B"], "multi": false}, {"q": "Which type of inhibition hypotheses proposed that children became more mentally lazy and less prepared to invest the mental effort necessary for reading as a result of watching television?", "options": [["A", "Concentration-deterioration hypothesis"], ["B", "Passivity hypothesis"], ["C", "Reading depreciation hypothesis"], ["D", "Displacement hypothesis"]], "answer": ["B"], "multi": false}, {"q": "What year did social media appear?", "options": [["A", "The 1920s"], ["B", "The 1950s"], ["C", "The 1990s"], ["D", "The 2000s"]], "answer": ["D"], "multi": false}, {"q": "Which is correct about Print media?", "options": [["A", "There are no bandwidth limits in print media."], ["B", "Print media also require literacy of the audience."], ["C", "Print media lend themselves better to a more detailed treatment of most topics than do electronic media."], ["D", "All of the above."]], "answer": ["D"], "multi": false}, {"q": "Why might bad news be released at a time guaranteed to receive less coverage?", "options": [["A", "To allow for thorough public debate."], ["B", "To ensure maximum media attention."], ["C", "To minimize public scrutiny."], ["D", "To increase transparency."]], "answer": ["C"], "multi": false}, {"q": "Which of the following factors contributes to sensation-seeking behavior in violent media consumption?", "options": [["A", "Desire for novelty and intense experiences."], ["B", "Reduced emotional arousal levels."], ["C", "Strong parental supervision."], ["D", "Increased empathy for others."]], "answer": ["A"], "multi": false}, {"q": "Which topic is NOT likely to be included in a curriculum for pornography literacy?", "options": [["A", "How to deal with shame"], ["B", "Communication/consent"], ["C", "Body/genital image"], ["D", "The fetishization of LGTQ people"], ["E", "Physical safety"], ["F", "None of the above"]], "answer": ["D"], "multi": false}, {"q": "How did Meyrowitz (1985) argue that television forever changed politics?", "options": [["A", "By emphasizing the importance of print media."], ["B", "By increasing the psychological distance between politicians and voters."], ["C", "By promoting only visual aspects of political campaigns."], ["D", "By decreasing the psychological distance between politicians and voters."]], "answer": ["D"], "multi": false}, {"q": "Which factor likely influenced declining TV portrayal of smoking since the 1960s?", "options": [["A", "Censorship laws"], ["B", "Health concerns for youth"], ["C", "Lack of smoking actors"], ["D", "Decline in tobacco production"]], "answer": ["B"], "multi": false}, {"q": "What is the term for when repeated media exposure lowers emotional inhibition against violence?", "options": [["A", "Displacement"], ["B", "Desensitization"], ["C", "Disinhibition"], ["D", "Empathy reduction"]], "answer": ["B"], "multi": false}, {"q": "How do you know about Cumulative Effects Model?", "options": [["A", "This is a model of selective effects based on individual differences"], ["B", "This model argues that most individuals in a mass society perceive messages from media in the same way and react to them weakly and very differently"], ["C", "This model emphasizes the importance of repeated exposure to media stimuli and suggests that effects are due not so much to a single exposure as to the additive effects of many instances of exposure."], ["D", "This model argues that most individuals in a mass society perceive messages from media in the same fashion and react to them strongly and very similarly"]], "answer": ["C"], "multi": false}, {"q": "At what times do news shows and commercials receive relatively less attention?", "options": [["A", "Early morning"], ["B", "Noon"], ["C", "Evening"], ["D", "At night"]], "answer": ["A"], "multi": false}, {"q": "What are some media values about substance abuse? Choose 3 correct answers.", "options": [["A", "It is still widely believed that alcoholism is a disease and a social problem."], ["B", "Attitudes toward excessive drinking are more tolerant than they once were."], ["C", "The alcoholic is portrayed more often as an object of humor."], ["D", "Binge drinking among college students remains one of the biggest concerns in the United States."], ["E", "Respected characters' illicit drug use is not likely to be shown in most TV shows today."]], "answer": ["A", "B", "C"], "multi": true}, {"q": "Which field of communication research did Agenda Setting Theory initially grow out of?", "options": [["A", "Business communication"], ["B", "Entertainment industry"], ["C", "Political socialization"], ["D", "Face-to-face communication"]], "answer": ["C"], "multi": false}, {"q": "Most comedy involves some sort of ________.", "options": [["A", "incongruity or contradiction"], ["B", "wisdom"], ["C", "problem-solving"], ["D", "new information"]], "answer": ["A"], "multi": false}, {"q": "Why do people seek to consume sports media?", "options": [["A", "Because sports programs make up the most TV broadcasting time"], ["B", "Because on TV, only sports (and in a very different way, news) is live and unrehearsed with the outcome unknown"], ["C", "Because people are competitive in nature"], ["D", "Because watching sports is the most exciting media experience"]], "answer": ["B"], "multi": false}, {"q": "How can listening to music positively affect individuals?", "options": [["A", "Music can increase in blood pressure and stress levels"], ["B", "Music can improve cognitive function and memory."], ["C", "Music can induce pleasant mood states of different sorts, and it can reduce feelings of anxiety and generally lift the spirits."], ["D", "Music may remind one of an absent friend and enhance feelings of loneliness or serve to strengthen one's social identification with others who like that music."]], "answer": ["C"], "multi": false}, {"q": "Depictions of dangers and injuries (assaults, natural disasters) are more scary to", "options": [["A", "juvenile"], ["B", "adolescent"], ["C", "preschoolers"], ["D", "older elementary school children"]], "answer": ["D"], "multi": false}, {"q": "Which of the following statements describes \"Image-Building\"?", "options": [["A", "Conveying to the voters what issues voters should feel are particularly important"], ["B", "Seeking to express an image of a candidate"], ["C", "Getting awareness and recognition of the candidates' name"], ["D", "Developing a candidate's position on issues"]], "answer": ["B"], "multi": false}, {"q": "What emotional responses were most commonly associated with early exposure to sexual media among children?", "options": [["A", "Curiosity and calmness"], ["B", "Disgust, shock, and embarrassment"], ["C", "Joy and acceptance"], ["D", "None of the above"]], "answer": ["B"], "multi": false}, {"q": "What is a double standard of media portrayal of casual sex?", "options": [["A", "Adult dating couples can have early sexual activity without any consequences."], ["B", "A teenager may consider having sex with a boyfriend or a girlfriend, but may choose to abstain in the end."], ["C", "Traditional values are both challenged and affirmed."], ["D", "The decision to have sex is often openly discussed with both family and friends."], ["E", "The choice of whether to have sex is portrayed as a difficult or complex decision often for teens, but seldom for adults."]], "answer": ["E"], "multi": false}, {"q": "________ is a sort of reverse modeling effect, whereby viewers react so strongly to seeing violence and have such a traumatized perceived reality.", "options": [["A", "Disinhibition"], ["B", "Sensitization"], ["C", "Desensitization"], ["D", "Cultivation"]], "answer": ["B"], "multi": false}, {"q": "What kind of media started carrying ads regularly in mid-1600s?", "options": [["A", "Television"], ["B", "Newspapers"], ["C", "Radio"], ["D", "Social networking sites"]], "answer": ["B"], "multi": false}, {"q": "\"The perceived reality of media is greater if our identification with the characters is such that they become significant persons in our own lives and we develop a parasocial relationship with them\". What kind is being talked about here?", "options": [["A", "Suspending Disbelief"], ["B", "Attention"], ["C", "Empathy"], ["D", "Identification"]], "answer": ["D"], "multi": false}, {"q": "What are the uses and gratifications that we receive from music? (Choose all correct answers)", "options": [["A", "Music is frequently used as a tool for mood management and mood repair."], ["B", "Music cannot fill silence and supply background noise, often at home or while commuting."], ["C", "Music becomes a natural background or a part or talking with friends, partying, or other recreation."], ["D", "Over the years, an increase in lyrical themes that objectify women, especially in the genres of rap and mainstream."]], "answer": ["A", "C"], "multi": true}, {"q": "Which of the following is a service of daily news for secondary school students?", "options": [["A", "Channel One News"], ["B", "Teen Programs"], ["C", "Teen One News"], ["D", "Channel Programs"]], "answer": ["A"], "multi": false}, {"q": "Critics fear that the advent of ________ isolating children from social communication", "options": [["A", "television"], ["B", "comic"], ["C", "newspaper"], ["D", "radio"]], "answer": ["A"], "multi": false}, {"q": "In media use, ________ affects how a child can extract information from that medium and represent it in memory.", "options": [["A", "The nature of specific medium"], ["B", "length of content"], ["C", "Type of content"]], "answer": ["A"], "multi": false}, {"q": "Who can become the source of observational learning on media?", "options": [["A", "An actor"], ["B", "An animation character"], ["C", "Artist"], ["D", "Both A, B and C"]], "answer": ["D"], "multi": false}, {"q": "Which theory is illustrated by the following example? \"When we watch a TV drama about a woman who discovers she has breast cancer, we may acquire knowledge for dealing with that particular situation. The viewer may learn specific activities like breast self-examination, how to tell her husband about her illness, how to seek out information about possible treatments, and how to cope with a mastectomy and chemotherapy in terms of her own self-image and sexuality\".", "options": [["A", "Social Cognitive Theory"], ["B", "Cultivation Theory"], ["C", "Schema (Script) Theory"], ["D", "Limited Capacity Model"]], "answer": ["A"], "multi": false}, {"q": "In what ways do different groups of people perceive news differently?", "options": [["A", "They interpret news based on their cultural biases."], ["B", "They are influenced by the framing of news by media outlets."], ["C", "They prioritize different news topics based on their demographics."], ["D", "All of the above."]], "answer": ["D"], "multi": false}, {"q": "What is \"Time shifting\"?", "options": [["A", "which prevents viewers to record TV shows and watch them later while fast-forwarding through the ads"], ["B", "which enables viewers to record TV shows and watch them later while slow-forwarding through the ads"], ["C", "which enables viewers to record TV shows and watch them later while fast-forwarding through the ads"], ["D", "which prevents viewers to record TV shows and watch them later while slow-forwarding through the ads"]], "answer": ["C"], "multi": false}, {"q": "Which aspect of political campaigns is inordinately heavily covered?", "options": [["A", "Major pronouncements"], ["B", "Routine campaign events"], ["C", "Candidate's health concerns"], ["D", "Candidate's personal life"]], "answer": ["A"], "multi": false}, {"q": "In the famous slogan \"Just do it\" of Nike, what emotion are they aiming to evoke?", "options": [["A", "Fear and anxiety"], ["B", "Confidence and empowerment"], ["C", "Nostalgia and sentimentality"], ["D", "Curiosity and intrigue"]], "answer": ["B"], "multi": false}, {"q": "In terms of social factors contributing to watching horror films, what did Zillmann and Weaver suggest in 1996?", "options": [["A", "Adolescents tend to develop and test a model of the role of social motives in consuming horror film as part of their gender socialization."], ["B", "These films often reflect cultural angst that precedes and follows wars."], ["C", "Young men, compared to women, are much more desirous that their date not know how scared they felt while watching a scary movie."], ["D", "The elicitation of empathy may evoke sympathy for the victim of violence, which in turn predicts lesser enjoyment of the violence."]], "answer": ["A"], "multi": false}, {"q": "Which of the following is an aspect of political campaigns that is inordinately heavily covered?", "options": [["A", "Minor legislative achievements of candidates"], ["B", "Major pronouncements"], ["C", "Detailed policy proposals"], ["D", "Local community outreach events"]], "answer": ["B"], "multi": false}, {"q": "What is the three-factor construct of empathy according to Zillmann?", "options": [["A", "Dispositional, excitatory, and experiential components"], ["B", "Dispositional, excitatory, and expressive components"], ["C", "Subjective, physiological and expressive components"], ["D", "Attitudinal, emotional and behavioral components"]], "answer": ["A"], "multi": false}, {"q": "According to Uses and Gratifications Theory, what primarily determines the effect of media on the individual?", "options": [["A", "The level of education of the viewer."], ["B", "The amount of time spent with the media."], ["C", "The individual's specific reasons for using the media."], ["D", "The general content of the media consumed."]], "answer": ["C"], "multi": false}, {"q": "Fill in the blanks: Music is frequently used as a tool for mood ________ and mood ________. Music can induce pleasant mood states of different sorts, and it can reduce feelings of anxiety and generally lift the spirits.", "options": [["A", "relaxation - repair"], ["B", "management - repair"], ["C", "control - restrict"], ["D", "impulse - analysis"]], "answer": ["B"], "multi": false}, {"q": "According to Lang & Lang (1984), what is primarily remembered long after the events reported in the news?", "options": [["A", "The actual events that occurred"], ["B", "The reality constructed in the memories of the millions who watched"], ["C", "The point of view of the few who were there"], ["D", "The diversity of news coverage"]], "answer": ["B"], "multi": false}, {"q": "Which is not one of children's magazines in USA?", "options": [["A", "Teen Vogue"], ["B", "Boy's Life"], ["C", "National Geographic Kids"], ["D", "The New York Times"]], "answer": ["D"], "multi": false}, {"q": "In social marketing, positive psychology primarily encourages messages that focus on:", "options": [["A", "Fear, guilt, and punishment"], ["B", "Happiness, strengths, and positive behavior change"], ["C", "Psychoanalysis and unconscious desires"], ["D", "Media violence and aggression"]], "answer": ["B"], "multi": false}, {"q": "The central distinction in ELM is the postulation of two distinct routes to persuasion: ________ and ________.", "options": [["A", "Emotional route - behavioral route"], ["B", "Content route - visual route"], ["C", "Central route - peripheral route"], ["D", "Rational route - emotional route"]], "answer": ["C"], "multi": false}, {"q": "What does cognitive process mean?", "options": [["A", "The thought processes involved in attending, perceiving, comprehending, interpreting, and remembering the material that we encounter through media"], ["B", "the thought processes involved in attending, framing, comprehending, interpreting, and remembering the material that we encounter through media"], ["C", "the thought processes involved in attending, perceiving, framing, interpreting, and remembering the material that we encounter through media"], ["D", "the thought processes involved in attending, perceiving, comprehending, framing, and remembering the material that we encounter through media"]], "answer": ["A"], "multi": false}, {"q": "What factors are essential in developing effective prompts for enhancing language model performance?", "options": [["A", "Sufficient context"], ["B", "Clear instructions"], ["C", "Specific formatting guidelines"], ["D", "Complex vocabulary"]], "answer": ["A", "B", "C"], "multi": true}, {"q": "Which of the following best describes a concern about news coverage of sexually violent crimes?", "options": [["A", "Context of sexuality"], ["B", "Socialization of adolescent behavior"], ["C", "Thrilling toward an erotic film"], ["D", "Sexual details in the news"]], "answer": ["D"], "multi": false}, {"q": "Which of the following statement is true about Children's media usage?", "options": [["A", "A large majority of what children watch is not television produced for children but rather programs produced for a general audience, primarily made up of adults."], ["B", "A minority of what children watch is not television produced for children but rather programs produced for a general audience."], ["C", "A large majority of what children watch is not television produced for children but rather programs produced for a general audience, primarily made up of men adults."]], "answer": ["A"], "multi": false}, {"q": "What is \"sex slavery rape\" theme?", "options": [["A", "An individual enacts revenge for rape or other sexual acts committed against them."], ["B", "Rape is portrayed as a crime due to unfulfilled sexual need."], ["C", "Powerful men subject younger, sometimes underage females to sexual sadistic behaviors."], ["D", "The main victim is barely survived, but still devastated, and may rehabilitate themselves under psychological circumstances."]], "answer": ["C"], "multi": false}, {"q": "Which of the following best describes the primary characteristics of a newsworthy event?", "options": [["A", "Romantic and comedic"], ["B", "Comedic and dramatic"], ["C", "Comedic and action-oriented"], ["D", "Dramatic and conflict-filled"]], "answer": ["D"], "multi": false}, {"q": "The term ________ coined by the Noices in their research refer to the process where an actor uses physical, mental, and emotional means to communicate to another.", "options": [["A", "empathy"], ["B", "identification"], ["C", "active experiencing"], ["D", "suspense"]], "answer": ["C"], "multi": false}, {"q": "What is the prime time typically for the largest network TV audience?", "options": [["A", "8 to 11 a.m"], ["B", "8 to 11 p.m"], ["C", "9 to 12 a.m"], ["D", "9 to 12 p.m"]], "answer": ["B"], "multi": false}, {"q": "What is the main purpose of science shows for children?", "options": [["A", "Set a valued social model for children"], ["B", "Increase cultural pride, confidence, and interpersonal cooperation"], ["C", "Provide preschoolers with an enriched experience leading to prereading skills"], ["D", "Help children experience the excitement of scientific discovery"]], "answer": ["D"], "multi": false}, {"q": "Which was among the last nations to welcome TV and the Internet in 1999?", "options": [["A", "Bhutan"], ["B", "Fiji"], ["C", "Iceland"], ["D", "Vietnam"]], "answer": ["A"], "multi": false}, {"q": "What is parental mediation?", "options": [["A", "Parents actively select and control what children see on television and the Internet."], ["B", "Parents are co-viewers with children."], ["C", "Parents are highly aware of the comprehensive effects that media have on their children."], ["D", "Parents enable children to participate in more outside activities and plays instead of watching television and surfing the Internet."], ["E", "Parents are on hand to explain some of the most difficult or disturbing scenes children witness on television or video."]], "answer": ["A", "B", "E"], "multi": true}, {"q": "What seems to be the strongest reinforcement of violence that can be seen frequently in blockbuster movies?", "options": [["A", "The hero is attractive, bravery and self-sacrifice."], ["B", "The heroic character uses violence to kill the bad guys for righteous reasons."], ["C", "Acting violently tends to bring rewards to the violent character."], ["D", "The thrilling and thought-provoking plot where the act of violence happens."]], "answer": ["B"], "multi": false}, {"q": "What is the way to study the number of people exposed to the media?", "options": [["A", "Looking at Exposure"], ["B", "Looking at Content"], ["C", "Looking at Cognition"], ["D", "Looking at Effects"]], "answer": ["A"], "multi": false}, {"q": "Which statement is FALSE about sex in media?", "options": [["A", "It is one area in which we clearly tolerate some limits on freedom of speech."], ["B", "Explicit sexual materials have traditionally been designed by and for heterosexual men."], ["C", "Recently there has been some decrease in sexual materials with more emphasis on relationship, pre- and post-coital behaviors."], ["D", "There is far more concern about the effects of sexual media on children than on adults."]], "answer": ["C"], "multi": false}, {"q": "Which is not an effect of viewing sexual content in the media?", "options": [["A", "Sensitization"], ["B", "Arousal"], ["C", "Attitudes and Values"], ["D", "Behavioral Effects"]], "answer": ["A"], "multi": false}, {"q": "Which cultures see plump women as healthy and attractive?", "options": [["A", "many Asian cultures"], ["B", "many African cultures"], ["C", "many European cultures"], ["D", "many American cultures"]], "answer": ["B"], "multi": false}, {"q": "According to research, what content type had the strongest negative psychological effects?", "options": [["A", "Nonviolent sexual content"], ["B", "Sexually violent material"], ["C", "Romantic content"], ["D", "Erotic novels"]], "answer": ["B"], "multi": false}, {"q": "Which section in the newspapers does photos of women outnumber photos of men? (Luebke, 1989)", "options": [["A", "Culture"], ["B", "News"], ["C", "Lifestyle"], ["D", "Sport"]], "answer": ["C"], "multi": false}, {"q": "Why is watching sports on TV considered a unique emotional experience in media consumption?", "options": [["A", "It involves both individual and group emotions."], ["B", "It discourages emotional expression during key moments."], ["C", "It is less emotional compared to movies and music."], ["D", "It has no physiological impact on the viewers."]], "answer": ["A"], "multi": false}, {"q": "What often limits the effectiveness of PSAs aimed at encouraging health behavior change?", "options": [["A", "Low viewer interest"], ["B", "Unrealistically high goals"], ["C", "Celebrity involvement"], ["D", "Complex production techniques"]], "answer": ["B"], "multi": false}, {"q": "Which of the following examples best illustrates media as a vicarious emotional experience?", "options": [["A", "Going for a walk in the park"], ["B", "Attending a live concert and feeling the music resonate within you"], ["C", "Reading a textbook to learn about historical events"], ["D", "Watching a tear-jerking movie and crying along with the characters"]], "answer": ["D"], "multi": false}, {"q": "What DOES NOT characterize the \"mass nature\" of mass communication?", "options": [["A", "The audience is large and anonymous, and often very heterogeneous"], ["B", "The message is straightforward"], ["C", "Communication sources are institutional and organizational"], ["D", "The basic economic function to attract and hold as large an audience as possible for the advertisers"]], "answer": ["B"], "multi": false}, {"q": "Which country was the last country to have television in 1976?", "options": [["A", "South Africa"], ["B", "North Korea"], ["C", "Vietnam"], ["D", "Laos"]], "answer": ["A"], "multi": false}, {"q": "What are general ways of looking at media?", "options": [["A", "Looking at Content"], ["B", "Looking at Exposure"], ["C", "Looking at Effects"], ["D", "All of the above"]], "answer": ["D"], "multi": false}, {"q": "\"The nature of a specific medium affects how a child can extract information from that medium and represent it in memory\", which of the following forms?", "options": [["A", "Information Extraction and Memory in adults"], ["B", "Mental Effort and Social Interaction"], ["C", "The Medium and Imagination"], ["D", "Information Extraction and Memory in Children"]], "answer": ["D"], "multi": false}, {"q": "According to cultural anthropologist Conrad Kottak, how many stages of societal interaction with television are identified?", "options": [["A", "Five"], ["B", "Four"], ["C", "Three"]], "answer": ["A"], "multi": false}, {"q": "Fill in a blank: \"The ________ content of the attitude is the feeling toward that product.\"", "options": [["A", "action"], ["B", "belief"], ["C", "affective"], ["D", "cognition"]], "answer": ["C"], "multi": false}, {"q": "What may happen when television content exceeds a child's comprehension level?", "options": [["A", "The child may initially pay attention but quickly lose interest."], ["B", "The child will necessarily understand the content through continued exposure."], ["C", "The child's attention will remain constant throughout the program."], ["D", "The child will stop processing all visual information."]], "answer": ["A"], "multi": false}, {"q": "What does the catharsis theory predict about violent media consumption?", "options": [["A", "It increases violent behavior by reducing inhibitions."], ["B", "It decreases violent behavior by providing emotional release."], ["C", "It increases empathy for victims of violence."], ["D", "It reduces exposure to violent behaviors."]], "answer": ["B"], "multi": false}, {"q": "All of the following are three general forms of \"Parental Mediation\" EXCEPT", "options": [["A", "Active Mediation"], ["B", "Restrictive Mediation"], ["C", "Classroom Training"], ["D", "Co-viewing"]], "answer": ["C"], "multi": false}, {"q": "How many components do empathy have? What is it/are they?", "options": [["A", "There is 1. It is cognitive"], ["B", "There is 1. It is emotional components"], ["C", "There are 2. They are cognitive and emotional components"], ["D", "There are 3. They are cognitive, incognitve and emotional components."]], "answer": ["C"], "multi": false}, {"q": "Design an ad campaign incorporating humor for a global audience. Which key factor would you prioritize to ensure cultural sensitivity?", "options": [["A", "Using slapstick humor as it is universally understood"], ["B", "Tailoring humor to avoid sensitive cultural topics"], ["C", "Including political jokes to connect with global events"], ["D", "Focusing on humor that requires deep cultural knowledge"]], "answer": ["B"], "multi": false}, {"q": "What is hard news? (Jamieson and Campbell, 1992)", "options": [["A", "Any report of an event that happened or was disclosed within the previous 24 hours and treats an issue of ongoing concern."], ["B", "Every news that we could find on the Internet"], ["C", "Any report of an event that happened or was disclosed after 24 hours later and treats an issue of ongoing concern."], ["D", "These features have a narrative structure closer to fiction and are most prevalent on so-called \"slow news days\"."]], "answer": ["A"], "multi": false}, {"q": "How does music influence teenage self-identity?", "options": [["A", "It separates them from parental values and norms."], ["B", "It encourages universal agreement on musical preferences."], ["C", "It only provides entertainment."], ["D", "It strengthens generational bonds."]], "answer": ["A"], "multi": false}, {"q": "American singer-songwriter and rapper, Lil Nas X, known for his hit song \"Old Town Road\", has used his work to address issues related to race, religion, and gay sexuality. What did this story reflect?", "options": [["A", "Many pop musicians called attention to social and political issues or concerns."], ["B", "Many popular music artists used the platform of their fame to remind people not to care about political injustice."], ["C", "When \"Old Town Road\" was released, it created a controversy about whether it was a true country song or not."], ["D", "\"Old Town Road\" was released in 2018 and became famous on TikTok."]], "answer": ["A"], "multi": false}, {"q": "When the editor of Tijuana's newspaper Zeta wrote against the local drug cartel, he was visited by a team of assassins (1998). This is an example of", "options": [["A", "Direct Censorship"], ["B", "Indirect Censorship"], ["C", "Blocking Access"], ["D", "Intimidation"]], "answer": ["D"], "multi": false}, {"q": "What is NOT a common effect of viewing sexual content in media in teenagers?", "options": [["A", "Learning how to engage in sexual activities, especially pre-coital sexual activities"], ["B", "Increasing knowledge about sex"], ["C", "Becoming more sexually active"], ["D", "Increasing use of birth control methods"], ["E", "Weakening family-taught values against premarital sex"]], "answer": ["D"], "multi": false}, {"q": "Which example demonstrates the local hook characteristic of news coverage in Vietnam?", "options": [["A", "Family life is a common theme."], ["B", "Emotional appeals are frequently used."], ["C", "Traffic accidents are daily reported."], ["D", "Stories about Vietnamese people living in foreign countries tend to be reported."], ["E", "None of the above"]], "answer": ["D"], "multi": false}, {"q": "What are three major subprocesses of media information processing in Limited Capacity Model?", "options": [["A", "encoding, storage, retrieval"], ["B", "encoding, decoding, retrieval"], ["C", "framing, encoding, storage"], ["D", "encoding, framing, decoding"]], "answer": ["A"], "multi": false}, {"q": "What are the key components of Social Cognitive Theory as it applies to media? (Select all that apply)", "options": [["A", "Direct reinforcement is required for learning to occur."], ["B", "Observational learning involves both cognitive and behavioral processes."], ["C", "The media model serves as a source of observational learning."], ["D", "Social Cognitive Theory emphasizes the role of stimulus-response in learning."]], "answer": ["B", "C"], "multi": true}, {"q": "When did TV shows with gay and lesbian characters appear?", "options": [["A", "In the 1990s"], ["B", "In the 1960s"], ["C", "In the 1970s"], ["D", "In the 2000s"]], "answer": ["C"], "multi": false}, {"q": "What is the pervasive family image in the media in the twenty-first century? Check all that apply.", "options": [["A", "Family is more important than money, power and career advancement."], ["B", "The reality of a loss of traditional values"], ["C", "Negative relations within extended families."], ["D", "Family unity"], ["E", "Troubled family dynamics in the modern world"]], "answer": ["B", "E"], "multi": true}, {"q": "How do media consultants contribute to image-building in political advertising?", "options": [["A", "By promoting neutrality and transparency"], ["B", "By tailoring the candidate's image according to voter preferences"], ["C", "By avoiding emotional responses in viewers"], ["D", "Minimizing the candidate's exposure in the media"]], "answer": ["B"], "multi": false}, {"q": "Which individual factors make people attracted to violence differently? Choose 3 correct answers.", "options": [["A", "Age"], ["B", "Empathy"], ["C", "Family background"], ["D", "Sensation seeking"], ["E", "Psychoticism"], ["F", "Personality characteristics"]], "answer": ["A", "B", "D"], "multi": true}, {"q": "What is one criticism about TV ratings?", "options": [["A", "The lack of uniformity"], ["B", "Including complicated codes"], ["C", "The inappropriate criteria"], ["D", "The inconsideration of audiences' needs"]], "answer": ["A"], "multi": false}, {"q": "The 1990 Children's Television Act, which required all broadcast stations in the United States to provide educational programming for children, was clarified by the 1996 interpretation of this law by the FCC, which required each station to provide a minimum of ________ a week of educational and informational programming for children (Kunkel, 1998).", "options": [["A", "four times"], ["B", "four hours"], ["C", "three times"], ["D", "three hours"]], "answer": ["D"], "multi": false}, {"q": "Which program is described as \"the most watched young children's TV show of all time\"?", "options": [["A", "Blue's Clues"], ["B", "Sesame Street"], ["C", "Dora the Explorer"], ["D", "Barney & Friends"]], "answer": ["B"], "multi": false}];
+const KEY='mmp_ontap_v1';
+let S;
+try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
+S.learned=S.learned||{};S.marked=S.marked||{};S.wrong=S.wrong||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let mode='flash',filter='all',idx=0,flipped=false,picked=[],checked=false,exam=null,timerId=null;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function list(){
+  return DATA.map((q,i)=>i).filter(i=>{
+    if(filter==='todo')return !S.learned[i];
+    if(filter==='done')return !!S.learned[i];
+    if(filter==='mark')return !!S.marked[i];
+    if(filter==='multi')return DATA[i].multi;
+    return true;});
+}
+function strip(L,cur){
+  return `<div class="navrow"><div class="strip" id="strip">${L.map((n,p)=>{
+    const c=[S.learned[n]?'ok':'',S.wrong[n]&&!S.learned[n]?'bad':'',S.marked[n]?'mark':'',p===cur?'cur':''].join(' ');
+    return `<button class="${c}" data-p="${p}">${n+1}</button>`}).join('')}</div>
+    <div class="counter"><b>${cur+1}</b>/${L.length}</div></div>`;
+}
+function progress(){
+  const n=DATA.length,d=Object.keys(S.learned).length;
+  return `<div class="prog"><i style="width:${d/n*100}%;background:var(--g)"></i><i style="width:${Object.keys(S.marked).length/n*100}%;background:var(--y)"></i></div>`;
+}
+function scrollStrip(){const c=document.querySelector('.strip .cur');if(c)c.scrollIntoView({inline:'center',block:'nearest'})}
+
+/* ---------- FLASHCARD ---------- */
+function renderFlash(anim=true){
+  const L=list();
+  if(!L.length){$('#app').innerHTML=`<div class="panel"><h2>Không có câu nào</h2><p class="muted">Bộ lọc hiện tại trống. Hãy chọn bộ lọc khác.</p></div>`;$('#bar').innerHTML='';return}
+  if(idx>=L.length)idx=L.length-1;
+  const n=L[idx],q=DATA[n];
+  const optsFront=q.options.map(o=>`<div class="opt"><span class="l">${o[0]}</span><span>${esc(o[1])}</span></div>`).join('');
+  const optsBack=q.options.map(o=>{const ok=q.answer.includes(o[0]);return `<div class="opt ${ok?'correct':'dim'}"><span class="l">${o[0]}</span><span>${esc(o[1])}</span></div>`}).join('');
+  $('#app').innerHTML=strip(L,idx)+progress()+
+   `<div class="scene ${anim?'enter':''}"><div class="flipper${flipped?' is-flipped':''}" id="card">
+      <div class="face card"><div><p class="q">${esc(q.q)}</p>${q.multi?'<div class="hint" style="margin:-6px 0 12px">Chọn tất cả đáp án đúng</div>':''}${optsFront}</div><div class="fliphint">Bấm vào thẻ hoặc nhấn <kbd>Space</kbd> để lật</div></div>
+      <div class="face card back bk"><div><div class="ans-head">ĐÁP ÁN ĐÚNG <span>${q.answer.join(', ')}</span></div><div class="in"><p class="q">${esc(q.q)}</p>${optsBack}</div></div><div class="flip">↻ Bấm vào thẻ để lật lại mặt trước</div></div>
+    </div></div>
+    <div class="row2"><span class="badge ${S.learned[n]?'':'no'}">${S.learned[n]?'Đã thuộc':'Chưa thuộc'}</span>
+    <div class="acts"><button id="mk" class="${S.marked[n]?'on':''}">${S.marked[n]?'★':'☆'} Đánh dấu</button></div></div>`;
+  $('#card').onclick=doFlip;
+  $('#mk').onclick=()=>{S.marked[n]?delete S.marked[n]:S.marked[n]=1;save();renderFlash(false)};
+  flipBar();
+  bindStrip(L);scrollStrip();
+}
+function flipBar(){
+  const L=list(),n=L[idx];
+  const done=Object.keys(S.learned).length;
+  $('#bar').innerHTML=`<div class="in"><button class="side" id="prev" ${idx===0?'disabled':''}>‹ <span>Trước</span></button>`+
+   (flipped?`<button class="big no" id="no">✕ Chưa thuộc</button><button class="big" id="yes">✓ Đã thuộc</button>`:`<button class="big" id="flipb">↻ Lật thẻ xem đáp án</button>`)+
+   `<button class="side" id="next"><span>Bỏ qua</span> ›</button></div>
+   <div class="help">${DATA.length-done} chưa thuộc · ${done} đã thuộc · <kbd>Space</kbd> lật thẻ · <kbd>←</kbd> <kbd>→</kbd> chuyển thẻ · <kbd>1</kbd> chưa thuộc · <kbd>2</kbd> đã thuộc</div>`;
+  $('#prev').onclick=()=>go(-1);$('#next').onclick=()=>go(1);
+  if(flipped){$('#yes').onclick=()=>mark(true);$('#no').onclick=()=>mark(false)}
+  else $('#flipb').onclick=doFlip;
+}
+function doFlip(){
+  if(mode!=='flash'||!list().length)return;
+  flipped=!flipped;
+  const c=$('#card');if(c)c.classList.toggle('is-flipped',flipped);
+  flipBar();
+}
+function mark(ok){
+  const n=list()[idx];
+  if(ok){S.learned[n]=1;delete S.wrong[n]}else{delete S.learned[n];S.wrong[n]=1}
+  save();
+  if(idx<list().length-1||filter==='all'){go(1)}else{flipped=false;render()}
+}
+function go(d){const L=list();idx=Math.max(0,Math.min(L.length-1,idx+d));flipped=false;picked=[];checked=false;render()}
+function bindStrip(L){document.querySelectorAll('.strip button').forEach(b=>b.onclick=()=>{idx=+b.dataset.p;flipped=false;picked=[];checked=false;render()})}
+
+/* ---------- HỌC (làm bài từng câu) ---------- */
+function renderStudy(){
+  const L=list();
+  if(!L.length){$('#app').innerHTML=`<div class="panel"><h2>Không có câu nào</h2></div>`;$('#bar').innerHTML='';return}
+  if(idx>=L.length)idx=L.length-1;
+  const n=L[idx],q=DATA[n];
+  const opts=q.options.map(o=>{
+    const isC=q.answer.includes(o[0]),isP=picked.includes(o[0]);
+    let c='opt';
+    if(checked){if(isC)c+=' correct';else if(isP)c+=' wrong';else c+=' dim'}else if(isP)c+=' sel';
+    return `<button class="${c}" data-l="${o[0]}" ${checked?'disabled':''}><span class="l">${o[0]}</span><span>${esc(o[1])}</span></button>`}).join('');
+  const hint=q.multi?`<div class="hint">Chọn ${q.answer.length>1?'tất cả đáp án đúng':''} (nhiều đáp án)</div>`:'';
+  let res='';
+  if(checked){const ok=picked.slice().sort().join()===q.answer.join();res=`<div class="hint" style="color:${ok?'var(--g)':'var(--r)'}">${ok?'✓ Chính xác!':'✗ Chưa đúng — đáp án: '+q.answer.join(', ')}</div>`}
+  $('#app').innerHTML=strip(L,idx)+progress()+`<div class="card static"><p class="q">${esc(q.q)}</p>${hint}<div style="margin-top:14px">${opts}</div>${res}</div>
+   <div class="row2"><span class="badge ${S.learned[n]?'':'no'}">${S.learned[n]?'Đã thuộc':'Chưa thuộc'}</span><div class="acts"><button id="mk" class="${S.marked[n]?'on':''}">${S.marked[n]?'★':'☆'} Đánh dấu</button></div></div>`;
+  $('#bar').innerHTML=`<div class="in"><button class="side" id="prev" ${idx===0?'disabled':''}>‹ <span>Trước</span></button>
+   <button class="big" id="chk" ${!checked&&!picked.length?'disabled style="opacity:.4"':''}>${checked?'Câu tiếp theo →':'Kiểm tra đáp án'}</button>
+   <button class="side" id="next"><span>Bỏ qua</span> ›</button></div><div class="help">Enter kiểm tra / tiếp · ← → chuyển câu · phím A–F chọn đáp án</div>`;
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>pick(b.dataset.l,q));
+  $('#chk').onclick=()=>studyCheck(n,q);
+  $('#mk').onclick=()=>{S.marked[n]?delete S.marked[n]:S.marked[n]=1;save();renderStudy()};
+  $('#prev').onclick=()=>go(-1);$('#next').onclick=()=>go(1);
+  bindStrip(L);scrollStrip();
+}
+function pick(l,q){
+  if(checked)return;
+  if(q.multi){picked=picked.includes(l)?picked.filter(x=>x!==l):[...picked,l]}else picked=[l];
+  renderStudy();
+}
+function studyCheck(n,q){
+  if(checked){go(1);return}
+  if(!picked.length)return;
+  checked=true;
+  const ok=picked.slice().sort().join()===q.answer.join();
+  if(ok){S.learned[n]=1;delete S.wrong[n]}else{delete S.learned[n];S.wrong[n]=1}
+  save();renderStudy();
+}
+
+/* ---------- THI THỬ ---------- */
+function renderExamHome(){
+  clearInterval(timerId);
+  const d=Object.keys(S.learned).length;
+  $('#app').innerHTML=`<div class="panel"><h2>Thi thử</h2><p class="muted">Đề trộn ngẫu nhiên từ ${DATA.length} câu. Câu nhiều đáp án chỉ được điểm khi chọn đúng và đủ.</p>
+   <div class="stats"><div class="stat"><b>${DATA.length}</b><span class="muted">Tổng số câu</span></div><div class="stat"><b>${d}</b><span class="muted">Đã thuộc</span></div><div class="stat"><b>${Object.keys(S.marked).length}</b><span class="muted">Đánh dấu</span></div></div>
+   <label class="muted">Số câu: <select id="cnt"><option>20</option><option>40</option><option>60</option><option selected>${DATA.length}</option></select></label>
+   <label class="muted" style="margin-left:12px">Nguồn: <select id="src"><option value="all">Tất cả</option><option value="wrong">Câu từng sai</option><option value="mark">Câu đánh dấu</option></select></label>
+   <div style="margin-top:16px"><button class="btn" id="go">Bắt đầu thi</button></div></div>`;
+  $('#bar').innerHTML='';
+  $('#go').onclick=()=>{
+    let pool=DATA.map((q,i)=>i);
+    const s=$('#src').value;
+    if(s==='wrong')pool=pool.filter(i=>S.wrong[i]);
+    if(s==='mark')pool=pool.filter(i=>S.marked[i]);
+    if(!pool.length){alert('Không có câu nào trong nguồn này.');return}
+    pool.sort(()=>Math.random()-.5);
+    exam={ids:pool.slice(0,+$('#cnt').value),ans:{},i:0,t0:Date.now(),done:false};
+    timerId=setInterval(tick,1000);renderExam();
+  };
+}
+function tick(){const e=$('#tm');if(e&&exam&&!exam.done){const s=Math.floor((Date.now()-exam.t0)/1000);e.textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}}
+function renderExam(){
+  if(!exam){renderExamHome();return}
+  if(exam.done){renderResult();return}
+  const n=exam.ids[exam.i],q=DATA[n],cur=exam.ans[n]||[];
+  const opts=q.options.map(o=>`<button class="opt ${cur.includes(o[0])?'sel':''}" data-l="${o[0]}"><span class="l">${o[0]}</span><span>${esc(o[1])}</span></button>`).join('');
+  const strip2=`<div class="navrow"><div class="strip">${exam.ids.map((m,p)=>`<button class="${exam.ans[m]?.length?'ok':''} ${p===exam.i?'cur':''}" data-p="${p}">${p+1}</button>`).join('')}</div><div class="counter timer" id="tm">00:00</div></div>`;
+  $('#app').innerHTML=strip2+`<div class="card static" style="margin-top:14px"><p class="q">${esc(q.q)}</p>${q.multi?'<div class="hint">Chọn nhiều đáp án</div>':''}<div style="margin-top:14px">${opts}</div></div>`;
+  const last=exam.i===exam.ids.length-1;
+  $('#bar').innerHTML=`<div class="in"><button class="side" id="prev" ${exam.i===0?'disabled':''}>‹ <span>Trước</span></button><button class="big ghost" id="fin">Nộp bài</button><button class="big" id="nx">${last?'Xem lại':'Câu tiếp →'}</button></div><div class="help">Đã trả lời ${Object.values(exam.ans).filter(a=>a.length).length}/${exam.ids.length}</div>`;
+  document.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    const l=b.dataset.l;let a=exam.ans[n]||[];
+    a=q.multi?(a.includes(l)?a.filter(x=>x!==l):[...a,l]):[l];
+    exam.ans[n]=a;renderExam();});
+  document.querySelectorAll('.strip button').forEach(b=>b.onclick=()=>{exam.i=+b.dataset.p;renderExam()});
+  $('#prev').onclick=()=>{exam.i--;renderExam()};
+  $('#nx').onclick=()=>{if(!last){exam.i++;renderExam()}};
+  $('#fin').onclick=()=>{const un=exam.ids.length-Object.values(exam.ans).filter(a=>a.length).length;if(!un||confirm(`Còn ${un} câu chưa trả lời. Nộp bài?`)){exam.done=true;exam.secs=Math.floor((Date.now()-exam.t0)/1000);clearInterval(timerId);record();renderExam()}};
+  tick();scrollStrip();
+}
+function isRight(n,a){return (a||[]).slice().sort().join()===DATA[n].answer.join()}
+function record(){exam.ids.forEach(n=>{if(isRight(n,exam.ans[n])){S.learned[n]=1;delete S.wrong[n]}else{delete S.learned[n];S.wrong[n]=1}});save()}
+function renderResult(){
+  const ok=exam.ids.filter(n=>isRight(n,exam.ans[n])).length,N=exam.ids.length;
+  const pct=Math.round(ok/N*100);
+  const wrong=exam.ids.filter(n=>!isRight(n,exam.ans[n]));
+  $('#app').innerHTML=`<div class="panel"><h2>Kết quả: ${ok}/${N} (${pct}%)</h2><p class="muted">Thời gian: ${Math.floor(exam.secs/60)} phút ${exam.secs%60} giây</p>
+   <div class="stats"><div class="stat"><b style="color:var(--g)">${ok}</b><span class="muted">Đúng</span></div><div class="stat"><b style="color:var(--r)">${wrong.length}</b><span class="muted">Sai / bỏ trống</span></div></div>
+   <button class="btn" id="again">Thi lại</button><button class="btn ghost" id="home">Về thi thử</button></div>
+   ${wrong.map(n=>{const q=DATA[n],a=exam.ans[n]||[];return `<div class="panel rev"><p class="q">${n+1}. ${esc(q.q)}</p>${q.options.map(o=>{const c=q.answer.includes(o[0]);const p=a.includes(o[0]);return `<div class="opt ${c?'correct':p?'wrong':'dim'}"><span class="l">${o[0]}</span><span>${esc(o[1])}</span></div>`}).join('')}<div class="hint">Bạn chọn: ${a.join(', ')||'(bỏ trống)'} · Đúng: ${q.answer.join(', ')}</div></div>`}).join('')}`;
+  $('#bar').innerHTML='';
+  $('#again').onclick=()=>{exam=null;renderExamHome()};
+  $('#home').onclick=()=>{exam=null;renderExamHome()};
+  window.scrollTo(0,0);
+}
+
+function render(){
+  if(mode==='flash')renderFlash();else if(mode==='study')renderStudy();else renderExam();
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  mode=b.dataset.m;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  flipped=false;picked=[];checked=false;
+  $('#filter').style.display=mode==='exam'?'none':'';
+  if(mode==='exam'&&!exam)renderExamHome();else render();
+});
+$('#filter').onchange=e=>{filter=e.target.value;idx=0;flipped=false;picked=[];checked=false;render()};
+$('#reset').onclick=()=>{if(confirm('Xóa toàn bộ tiến độ (đã thuộc, đánh dấu)?')){S={learned:{},marked:{},wrong:{}};save();idx=0;flipped=false;render()}};
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='SELECT')return;
+  if(mode==='exam')return;
+  if(e.key==='ArrowRight'){go(1)}
+  else if(e.key==='ArrowLeft'){go(-1)}
+  else if(mode==='flash'&&e.code==='Space'){e.preventDefault();doFlip()}
+  else if(mode==='flash'&&flipped&&(e.key==='1'||e.key==='2')){mark(e.key==='2')}
+  else if(mode==='study'){
+    const L=list(),n=L[idx],q=DATA[n];
+    if(e.key==='Enter'){studyCheck(n,q)}
+    else if(/^[a-fA-F]$/.test(e.key)&&q.options.some(o=>o[0]===e.key.toUpperCase()))pick(e.key.toUpperCase(),q);
+  }
+});
+render();
+</script>
+</body>
+</html>
